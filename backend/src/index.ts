@@ -5,4 +5,5 @@ import user from './usersRoutes'
 const app = new Hono().basePath("/api/v1");
 app.route('/blog', blog)
 app.route('/user', user)
+
 export default app
