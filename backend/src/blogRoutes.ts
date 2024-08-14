@@ -1,13 +1,21 @@
 import { Hono } from "hono";
-const blog = new Hono();
+import { getPrisma } from "./db";
+const blog = new Hono<{
+  Bindings: {
+    DATABASE_URL: string;
+  };
+}>();
 
-blog.get("/bulk",(c)=>{
-    return c.json("requested all blogs");
-})
+blog.get("/bulk", async (c) => {
+  const prisma = getPrisma(c.env.DATABASE_URL);
+  const allBlogs = await prisma.post.findMany();
+  console.log(allBlogs);
+  return c.json(allBlogs);
+});
 
 blog.get("/:id", (c) => {
-    const id = c.req.param("id");
-    return c.json(`requested blog with id: ${id}`);
+  const id = c.req.param("id");
+  return c.json(`requested blog with id: ${id}`);
 });
 
 blog.post("/", (c) => {
@@ -15,7 +23,7 @@ blog.post("/", (c) => {
 });
 
 blog.put("/", (c) => {
-    return c.json("Blog posted");
+  return c.json("Blog posted");
 });
 
 export default blog;
