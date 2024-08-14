@@ -13,7 +13,8 @@ const authMiddleware = createMiddleware(async (c, next) => {
       c.status(403);
       return c.json({ message: "Unauthorized" });
     }
-    await verify(token, c.env.JWT_SECRET);
+    const verifiedData = await verify(token, c.env.JWT_SECRET);
+    c.set("userId", verifiedData.id);
     await next();
   } catch (error) {
     console.log(error);
